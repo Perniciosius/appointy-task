@@ -15,7 +15,7 @@ import (
 func main() {
 	server := &http.Server{Addr: ":8080", Handler: router.RouteHandler{Routes: api.Routes}}
 	go func() {
-		if err := server.ListenAndServe(); err != nil {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalln(err)
 		}
 	}()
@@ -30,4 +30,5 @@ func main() {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("Server shutdown")
 }
