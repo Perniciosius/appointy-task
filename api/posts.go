@@ -41,7 +41,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	var result *mongo.InsertOneResult
 	result, err = postCollection.InsertOne(ctx, post)
 	if err != nil {
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	w.Write([]byte(fmt.Sprintf("Post id: %v", result.InsertedID)))
 }
@@ -61,7 +63,9 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	var result []byte
 	result, err = json.Marshal(post)
 	if err != nil {
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	w.Write(result)
 }
@@ -71,6 +75,7 @@ func GetPostList(w http.ResponseWriter, r *http.Request) {
 	userId := router.GetParam(r, 0)
 	if !checkUserExists(userId) {
 		w.Write([]byte("Invalid user id"))
+		return
 	}
 	var paginationLimit, paginationSkip int64 = 0, 0
 	if r.URL.Query().Has("limit") {
@@ -88,14 +93,18 @@ func GetPostList(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	cursor, err := postCollection.Find(ctx, bson.M{"userId": userId}, findOption)
 	if err != nil {
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	var postList []model.Post
 	for cursor.Next(context.TODO()) {
 		var element model.Post
 		err = cursor.Decode(&element)
 		if err != nil {
-			log.Fatalln(err)
+			w.Write([]byte("Unable to process request currently"))
+			log.Println(err)
+			return
 		}
 		postList = append(postList, element)
 	}
@@ -103,7 +112,9 @@ func GetPostList(w http.ResponseWriter, r *http.Request) {
 	var result []byte
 	result, err = json.Marshal(postList)
 	if err != nil {
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	w.Write(result)
 }

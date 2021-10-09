@@ -36,6 +36,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if user.Password == "" {
 		w.Write([]byte("Password must not be empty"))
+		return
 	}
 	if _, err := mail.ParseAddress(user.Email); err != nil {
 		w.Write([]byte("Provide a valid email"))
@@ -50,12 +51,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			user.Password = hashing.HashPassword(user.Password, nil)
 			result, err = userCollection.InsertOne(ctx, user)
 			if err != nil {
-				log.Fatalln(err)
+				w.Write([]byte("Unable to process request currently"))
+				log.Println(err)
+				return
 			}
 			w.Write([]byte(fmt.Sprintf("User id: %v", result.InsertedID)))
 			return
 		}
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	w.Write([]byte("User already exists with given email"))
 }
@@ -75,7 +80,9 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var result []byte
 	result, err = json.Marshal(user)
 	if err != nil {
-		log.Fatalln(err)
+		w.Write([]byte("Unable to process request currently"))
+		log.Println(err)
+		return
 	}
 	w.Write(result)
 }
