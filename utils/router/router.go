@@ -31,7 +31,7 @@ func (handler RouteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			ctx := context.WithValue(r.Context(), ctxKey{}, matches[1:])
-			route.handler(w, r.WithContext(ctx))
+			route.handler(w, r.WithContext(ctx)) // Store path parameter in request context
 			return
 		}
 	}
@@ -43,6 +43,7 @@ func (handler RouteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
+// Function to get path parameter from request context
 func GetParam(r *http.Request, index int) string {
 	fields := r.Context().Value(ctxKey{}).([]string)
 	return fields[index]

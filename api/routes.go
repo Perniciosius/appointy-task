@@ -4,6 +4,7 @@ import (
 	"appointy-task/utils/router"
 )
 
+// All available routes
 var Routes = []router.Route{
 	router.NewRoute("POST", "/users", CreateUser),
 	router.NewRoute("GET", "/users/([^/]+)", GetUser),

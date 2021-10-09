@@ -1,3 +1,5 @@
+// Handlers for routes related to posts
+
 package api
 
 import (

@@ -15,6 +15,7 @@ func GetDatabase() *mongo.Database {
 	return getClient().Database("instagram")
 }
 
+// Using singleton pattern for connecting to MongoDB
 func getClient() *mongo.Client {
 	if client != nil {
 		return client

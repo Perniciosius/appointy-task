@@ -18,6 +18,7 @@ func generateRandomSalt() []byte {
 	return salt
 }
 
+// Function to generate hashed password using SHA512 algorithm
 func HashPassword(password string, salt []byte) string {
 	if salt == nil {
 		salt = generateRandomSalt()
@@ -31,6 +32,7 @@ func HashPassword(password string, salt []byte) string {
 	return base64.URLEncoding.EncodeToString(hashedPasswordBytes)
 }
 
+// Function to check password is correct
 func CompareHashedPassword(hashedPassword, password string) bool {
 	hashedPasswordBytes, err := base64.URLEncoding.DecodeString(hashedPassword)
 	if err != nil {
