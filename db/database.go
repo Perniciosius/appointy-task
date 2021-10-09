@@ -25,7 +25,7 @@ func getClient() *mongo.Client {
 }
 
 func connect() *mongo.Client {
-	clientOptions := options.Client().ApplyURI(DB_URL)
+	clientOptions := options.Client().ApplyURI(db_url)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)
