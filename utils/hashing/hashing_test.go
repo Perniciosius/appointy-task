@@ -1,4 +1,4 @@
-package utils_test
+package hashing_test
 
 import (
 	utils "appointy-task/utils/hashing"

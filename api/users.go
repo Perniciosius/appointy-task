@@ -3,7 +3,7 @@ package api
 import (
 	"appointy-task/db"
 	"appointy-task/model"
-	utils "appointy-task/utils/hashing"
+	"appointy-task/utils/hashing"
 	"appointy-task/utils/router"
 	"context"
 	"encoding/json"
@@ -47,7 +47,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			var result *mongo.InsertOneResult
-			user.Password = utils.HashPassword(user.Password, nil)
+			user.Password = hashing.HashPassword(user.Password, nil)
 			result, err = userCollection.InsertOne(ctx, user)
 			if err != nil {
 				log.Fatalln(err)
