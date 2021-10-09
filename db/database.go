@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -32,12 +31,12 @@ func connect() *mongo.Client {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = client.Ping(context.TODO(), nil)
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("Connected to Database")
+	log.Println("Connected to Database")
 	return client
 }
 
