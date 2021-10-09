@@ -3,6 +3,7 @@ package main
 import (
 	"appointy-task/api"
 	"appointy-task/db"
+	"appointy-task/utils/router"
 	"context"
 	"log"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	server := &http.Server{Addr: ":8080", Handler: api.RouteHandler{}}
+	server := &http.Server{Addr: ":8080", Handler: router.RouteHandler{Routes: api.Routes}}
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
 			log.Fatalln(err)

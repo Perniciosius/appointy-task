@@ -3,7 +3,8 @@ package api
 import (
 	"appointy-task/db"
 	"appointy-task/model"
-	"appointy-task/utils"
+	utils "appointy-task/utils/hashing"
+	"appointy-task/utils/router"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -61,7 +62,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // Get user by id
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	userId := getField(r, 0)
+	userId := router.GetParam(r, 0)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	id, err := primitive.ObjectIDFromHex(userId)

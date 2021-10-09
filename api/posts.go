@@ -2,6 +2,7 @@ package api
 
 import (
 	"appointy-task/model"
+	"appointy-task/utils/router"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -45,7 +46,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 // Get post by id
 func GetPost(w http.ResponseWriter, r *http.Request) {
-	postId := getField(r, 0)
+	postId := router.GetParam(r, 0)
 	id, err := primitive.ObjectIDFromHex(postId)
 	if err != nil {
 		w.Write([]byte("Invalid post id"))
@@ -65,7 +66,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 
 // Get list of posts by user id
 func GetPostList(w http.ResponseWriter, r *http.Request) {
-	userId := getField(r, 0)
+	userId := router.GetParam(r, 0)
 	if !checkUserExists(userId) {
 		w.Write([]byte("Invalid user id"))
 	}
