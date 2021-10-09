@@ -26,8 +26,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	if post.Caption == "" || post.ImageUrl == "" || post.UserId == "" {
-		w.Write([]byte("Caption, User ID and Image URL cannot be empty"))
+	if post.ImageUrl == "" || post.UserId == "" {
+		w.Write([]byte("User ID and Image URL cannot be empty"))
 		return
 	}
 	if !checkUserExists(post.UserId) {
