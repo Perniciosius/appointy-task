@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"appointy-task/utils"
+	utils "appointy-task/utils/hashing"
 	"testing"
 )
 
