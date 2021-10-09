@@ -2,7 +2,9 @@ package api_test
 
 import (
 	"appointy-task/api"
+	"appointy-task/model"
 	"appointy-task/utils/router"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -147,5 +149,88 @@ func TestGetPostInvalidId(t *testing.T) {
 	expected := "Invalid post id"
 	if !strings.Contains(actual, expected) {
 		t.Errorf("Exptected: %v, got %v", expected, actual)
+	}
+}
+
+func TestGetPostList(t *testing.T) {
+	ts := httptest.NewServer(router.RouteHandler{Routes: api.Routes})
+	defer ts.Close()
+
+	res, err := http.Get(ts.URL + "/posts/users/6160b5e731b11bc9fb96d866")
+	if err != nil {
+		t.Error(err)
+	}
+
+	var actual []model.Post
+
+	err = json.NewDecoder(res.Body).Decode(&actual)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+	if len(actual) == 0 {
+		t.Error("Empty post list received")
+	}
+}
+
+func TestGetPostListInvalidUserId(t *testing.T) {
+	ts := httptest.NewServer(router.RouteHandler{Routes: api.Routes})
+	defer ts.Close()
+
+	res, err := http.Get(ts.URL + "/posts/users/b5e731b11bc9fb96d866")
+	if err != nil {
+		t.Error(err)
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Error(err)
+	}
+	actual := string(body)
+	expected := "Invalid user id"
+	if !strings.Contains(actual, expected) {
+		t.Error("Empty post list received")
+	}
+}
+
+func TestGetPostListPaginationLimit(t *testing.T) {
+	ts := httptest.NewServer(router.RouteHandler{Routes: api.Routes})
+	defer ts.Close()
+
+	res, err := http.Get(ts.URL + "/posts/users/6160b5e731b11bc9fb96d866?limit=2")
+	if err != nil {
+		t.Error(err)
+	}
+
+	var actual []model.Post
+
+	err = json.NewDecoder(res.Body).Decode(&actual)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+	if len(actual) > 2 {
+		t.Errorf("Expected less than 2 posts, received %v", len(actual))
+	}
+}
+
+func TestGetPostListPaginationSkip(t *testing.T) {
+	ts := httptest.NewServer(router.RouteHandler{Routes: api.Routes})
+	defer ts.Close()
+
+	res, err := http.Get(ts.URL + "/posts/users/6160b5e731b11bc9fb96d866?skip=10000")
+	if err != nil {
+		t.Error(err)
+	}
+
+	var actual []model.Post
+
+	err = json.NewDecoder(res.Body).Decode(&actual)
+	res.Body.Close()
+	if err != nil {
+		t.Error(err)
+	}
+	if len(actual) != 0 {
+		t.Errorf("Expected 0 posts, received %v", len(actual))
 	}
 }
