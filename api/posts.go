@@ -8,11 +8,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var postCollection = database.Collection("/posts")
@@ -70,9 +72,21 @@ func GetPostList(w http.ResponseWriter, r *http.Request) {
 	if !checkUserExists(userId) {
 		w.Write([]byte("Invalid user id"))
 	}
+	var paginationLimit, paginationSkip int64 = 0, 0
+	if r.URL.Query().Has("limit") {
+		paginationLimit, _ = strconv.ParseInt(r.URL.Query().Get("limit"), 10, 64)
+	}
+	if r.URL.Query().Has("skip") {
+		paginationSkip, _ = strconv.ParseInt(r.URL.Query().Get("skip"), 10, 64)
+	}
+
+	findOption := options.Find()
+	findOption.SetLimit(paginationLimit)
+	findOption.SetSkip(paginationSkip)
+	findOption.SetSort(bson.M{"timestamp": -1})
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	cursor, err := postCollection.Find(ctx, bson.M{"userId": userId})
+	cursor, err := postCollection.Find(ctx, bson.M{"userId": userId}, findOption)
 	if err != nil {
 		log.Fatalln(err)
 	}
